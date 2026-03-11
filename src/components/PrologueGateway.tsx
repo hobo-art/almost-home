@@ -26,69 +26,105 @@ export default function PrologueGateway({
     >
       <div className="border-t border-zinc-800/50 pt-8" />
 
-      <div className="text-center space-y-3">
-        <div className="text-indigo-400/60 text-xs font-mono tracking-[0.3em]">
-          THE PROLOGUE ENDS HERE
-        </div>
-        <p className="text-zinc-500 text-sm leading-relaxed max-w-md mx-auto">
-          The multiverse doesn&apos;t pause. Your timeline is still unanchored.
-          What comes next requires commitment — and credits.
-        </p>
-      </div>
-
-      <div className="space-y-4 max-w-sm mx-auto">
-        {isAnon && (
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.9, duration: 0.5 }}
-          >
-            <button
-              onClick={() => router.push("/auth/signin")}
-              className="w-full group relative bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-6 py-4 font-mono text-sm tracking-wide transition-all hover:shadow-lg hover:shadow-indigo-500/20"
-            >
-              ANCHOR YOUR TIMELINE
-              <span className="absolute inset-0 rounded-lg border border-indigo-400/0 group-hover:border-indigo-400/30 transition-colors" />
-            </button>
-            <p className="text-zinc-700 text-xs font-mono mt-2 text-center">
-              Sign in to save your progress. No passwords — just a magic link.
+      {isAnon ? (
+        <>
+          <div className="text-center space-y-3">
+            <div className="text-indigo-400/60 text-xs font-mono tracking-[0.3em]">
+              THE PROLOGUE ENDS HERE
+            </div>
+            <p className="text-zinc-500 text-sm leading-relaxed max-w-md mx-auto">
+              The multiverse doesn&apos;t pause. Your timeline is still
+              unanchored. What comes next requires commitment — and credits.
             </p>
-          </motion.div>
-        )}
+          </div>
 
-        {lowCredits && (
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1.2, duration: 0.5 }}
-          >
-            <button
-              onClick={() => router.push("/shop")}
-              className="w-full group border border-zinc-700 hover:border-indigo-600 hover:bg-indigo-950/20 text-zinc-300 hover:text-white rounded-lg px-6 py-4 font-mono text-sm tracking-wide transition-all"
+          <div className="space-y-4 max-w-sm mx-auto">
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.9, duration: 0.5 }}
             >
-              RECHARGE CREDITS
-              <span className="block text-zinc-600 text-xs mt-1 font-normal group-hover:text-zinc-400 transition-colors">
-                {credits} credits remaining — the math is the math
-              </span>
-            </button>
-          </motion.div>
-        )}
+              <button
+                onClick={() => router.push("/auth/signin")}
+                className="w-full group relative bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-6 py-4 font-mono text-sm tracking-wide transition-all hover:shadow-lg hover:shadow-indigo-500/20"
+              >
+                ANCHOR YOUR TIMELINE
+                <span className="absolute inset-0 rounded-lg border border-indigo-400/0 group-hover:border-indigo-400/30 transition-colors" />
+              </button>
+              <p className="text-zinc-700 text-xs font-mono mt-2 text-center">
+                Sign in to save your progress. No passwords — just a magic link.
+              </p>
+            </motion.div>
 
-        {!lowCredits && (
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1.2, duration: 0.5 }}
-          >
-            <button
-              onClick={() => router.push("/shop")}
-              className="w-full group border border-zinc-800 hover:border-zinc-700 text-zinc-500 hover:text-zinc-300 rounded-lg px-6 py-3 font-mono text-xs tracking-wide transition-all"
+            {lowCredits && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.2, duration: 0.5 }}
+              >
+                <button
+                  onClick={() => router.push("/shop")}
+                  className="w-full group border border-zinc-700 hover:border-indigo-600 hover:bg-indigo-950/20 text-zinc-300 hover:text-white rounded-lg px-6 py-4 font-mono text-sm tracking-wide transition-all"
+                >
+                  RECHARGE CREDITS
+                  <span className="block text-zinc-600 text-xs mt-1 font-normal group-hover:text-zinc-400 transition-colors">
+                    {credits} credits remaining — the math is the math
+                  </span>
+                </button>
+              </motion.div>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="text-center space-y-4">
+            <div className="text-indigo-400 text-xs font-mono tracking-[0.3em]">
+              TIMELINE ANCHORED
+            </div>
+            <h2 className="text-xl text-white font-light">
+              You&apos;re tethered now. The signal holds.
+            </h2>
+            <p className="text-zinc-500 text-sm leading-relaxed max-w-md mx-auto">
+              The prologue is complete. The next chapter is being written —
+              by the future, for you, in real time. When it arrives, your
+              subscription will hum again.
+            </p>
+          </div>
+
+          <div className="space-y-3 max-w-sm mx-auto">
+            {lowCredits && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.9, duration: 0.5 }}
+              >
+                <button
+                  onClick={() => router.push("/shop")}
+                  className="w-full group border border-zinc-700 hover:border-indigo-600 hover:bg-indigo-950/20 text-zinc-300 hover:text-white rounded-lg px-6 py-4 font-mono text-sm tracking-wide transition-all"
+                >
+                  RECHARGE CREDITS FOR WHAT COMES NEXT
+                  <span className="block text-zinc-600 text-xs mt-1 font-normal group-hover:text-zinc-400 transition-colors">
+                    {credits} credits remaining
+                  </span>
+                </button>
+              </motion.div>
+            )}
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2, duration: 0.5 }}
             >
-              BROWSE CREDIT PACKS
-            </button>
-          </motion.div>
-        )}
-      </div>
+              <button
+                onClick={() => router.push("/")}
+                className="w-full text-zinc-600 hover:text-zinc-400 text-xs font-mono py-3 transition-colors"
+              >
+                ← RETURN TO THE SURFACE
+              </button>
+            </motion.div>
+          </div>
+        </>
+      )}
 
       <motion.div
         initial={{ opacity: 0 }}

@@ -1,17 +1,46 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/play");
+    }
+  }, [status, router]);
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-indigo-400 text-sm font-mono animate-pulse tracking-widest">
+          CHECKING TIMELINE...
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "authenticated") {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-indigo-400 text-sm font-mono animate-pulse tracking-widest">
+          TIMELINE ANCHORED — REDIRECTING...
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await signIn("email", { email, redirect: false });
+    await signIn("email", { email, callbackUrl: "/play" });
     setSent(true);
     setLoading(false);
   };
@@ -28,6 +57,9 @@ export default function SignIn() {
           </h1>
           <p className="text-zinc-500 text-sm leading-relaxed">
             Check your email. Click the link. The future is waiting.
+          </p>
+          <p className="text-zinc-700 text-xs mt-6">
+            Check your spam folder — new signals sometimes get intercepted.
           </p>
         </div>
       </div>
