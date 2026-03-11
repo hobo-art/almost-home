@@ -15,7 +15,7 @@ export const authOptions: NextAuthOptions = {
           pass: process.env.EMAIL_SERVER_PASSWORD!,
         },
       },
-      from: process.env.EMAIL_FROM || "Almost Home <noreply@almosthome.io>",
+      from: process.env.EMAIL_FROM || "Almost Home <noreply@almost-home.io>",
     }),
   ],
   session: {

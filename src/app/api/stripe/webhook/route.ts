@@ -3,6 +3,8 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { grantCredits } from "@/lib/credit-system";
+import { sendPurchaseConfirmation } from "@/lib/email";
+import { prisma } from "@/lib/prisma";
 import Stripe from "stripe";
 
 export async function POST(req: NextRequest) {
@@ -45,6 +47,15 @@ export async function POST(req: NextRequest) {
           session.payment_intent as string
         );
         console.log(`Granted ${credits} credits to user ${userId}`);
+
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { email: true },
+        });
+        if (user?.email) {
+          const { ok, error } = await sendPurchaseConfirmation(user.email, credits);
+          if (!ok) console.warn("Purchase confirmation email failed:", error);
+        }
       } catch (error) {
         console.error("Failed to grant credits:", error);
         return NextResponse.json(

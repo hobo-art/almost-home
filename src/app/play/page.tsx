@@ -35,7 +35,18 @@ export default function PlayPage() {
   const [anxious, setAnxious] = useState(false);
   const [outOfCreditsMessage, setOutOfCreditsMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [clearing, setClearing] = useState(false);
   const router = useRouter();
+
+  const handleNewTimeline = async () => {
+    setClearing(true);
+    try {
+      await fetch("/api/session/clear", { method: "POST", credentials: "include" });
+      window.location.href = "/play";
+    } finally {
+      setClearing(false);
+    }
+  };
 
   useEffect(() => {
     async function loadState() {
@@ -155,8 +166,18 @@ export default function PlayPage() {
         />
       </main>
 
-      <footer className="fixed bottom-4 left-4 text-zinc-800 text-xs font-mono">
-        ALMOST HOME
+      <footer className="fixed bottom-4 left-4 right-4 flex items-center justify-between text-zinc-800 text-xs font-mono">
+        <span>ALMOST HOME</span>
+        {gameState.sessionType === "anon" && (
+          <button
+            type="button"
+            onClick={handleNewTimeline}
+            disabled={clearing}
+            className="text-zinc-600 hover:text-zinc-400 transition-colors disabled:opacity-50"
+          >
+            {clearing ? "..." : "New timeline"}
+          </button>
+        )}
       </footer>
     </div>
   );
