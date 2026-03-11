@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AnonymousSession {
+  id           String        @id @default(cuid())
+  sessionToken String        @unique
+  credits      Int           @default(100)
+  migratedToId String?
+  migratedTo   User?         @relation(fields: [migratedToId], references: [id])
+  expiresAt    DateTime
+  createdAt    DateTime      @default(now())
+  gameSessions GameSession[]
+
+  @@index([expiresAt])
+  @@index([sessionToken])
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  email              String              @unique
+  emailVerified      DateTime?
+  credits            Int                 @default(0)
+  stripeCustomerId   String?             @unique
+  createdAt          DateTime            @default(now())
+  gameSessions       GameSession[]
+  creditTransactions CreditTransaction[]
+  migratedSessions   AnonymousSession[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model GameSession {
+  id            String            @id @default(cuid())
+  userId        String?
+  user          User?             @relation(fields: [userId], references: [id])
+  anonSessionId String?
+  anonSession   AnonymousSession? @relation(fields: [anonSessionId], references: [id])
+  currentNodeId String            @default("the-call")
+  stateFlags    Json              @default("{}")
+  isActive      Boolean           @default(true)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  storyEvents   StoryEvent[]
+
+  @@index([userId])
+  @@index([anonSessionId])
+}
+
+model StoryEvent {
+  id          String      @id @default(cuid())
+  sessionId   String
+  session     GameSession @relation(fields: [sessionId], references: [id])
+  nodeId      String
+  choiceId    String?
+  creditSpent Int         @default(0)
+  narrative   String?     @db.Text
+  createdAt   DateTime    @default(now())
+
+  @@index([sessionId])
+}
+
+model CreditTransaction {
+  id              String   @id @default(cuid())
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id])
+  anonSessionId   String?
+  amount          Int
+  type            String
+  stripePaymentId String?
+  description     String?
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+  @@index([anonSessionId])
+}

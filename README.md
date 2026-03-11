@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Almost Home
 
-## Getting Started
+An interactive multiverse narrative game. You died. The future brought you back. Now you're searching for home — but every version is one letter off.
 
-First, run the development server:
+Navigate with a subscription from the future: finite credits, hidden costs, and the dread of spending too much.
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- PostgreSQL database
+- Accounts: [Anthropic](https://console.anthropic.com/), [Stripe](https://dashboard.stripe.com/), [Resend](https://resend.com/) (for magic link emails)
+
+### Setup
 
 ```bash
+# Install dependencies
+npm install
+
+# Copy env template and fill in your keys
+cp .env.example .env
+
+# Set up database
+npx prisma migrate dev --name init
+
+# Generate Prisma client
+npx prisma generate
+
+# Run dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Stripe Webhook (local dev)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copy the webhook signing secret to `STRIPE_WEBHOOK_SECRET` in `.env`.
 
-## Learn More
+## Architecture
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js 14** (App Router) — full-stack TypeScript
+- **PostgreSQL** via Prisma — game state, credits, sessions
+- **Claude API** — hybrid narrative generation (pre-authored backbone + LLM deviations)
+- **Stripe** — credit pack purchases (freemium model)
+- **NextAuth.js** — email magic link authentication
+- **Framer Motion** — atmospheric UI transitions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How It Works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Story Engine**: Pre-authored backbone nodes form the canonical story path. At any decision point, players can choose pre-written options (cheaper) or type custom actions that Claude generates responses for (costs more, scales with deviation from backbone).
 
-## Deploy on Vercel
+**Credit System**: 100 free credits on first visit. Small nudges cost 1-5 credits. Big changes cost 50-300. Some choices have hidden costs — the actual price is revealed after you choose.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Anonymous-First**: Players start immediately with no signup. Login (email magic link) is prompted at natural narrative beats: running out of credits, buying credits, or finishing the prologue.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy to Vercel
+
+1. Push to GitHub
+2. Import to [Vercel](https://vercel.com)
+3. Add environment variables
+4. Set up PostgreSQL (Neon or Supabase)
+5. Configure Stripe webhook endpoint: `https://yourdomain.com/api/stripe/webhook`
+6. Run `npx prisma migrate deploy` against production database

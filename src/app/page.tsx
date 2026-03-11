@@ -1,101 +1,137 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+
+const taglines = [
+  "Every version of home is one letter off.",
+  "The future sent you a subscription. Use it wisely.",
+  "Small moves cost little. Big changes cost everything.",
+  "Navigate the multiverse. Find where you belong.",
+];
+
+export default function LandingPage() {
+  const router = useRouter();
+  const [taglineIndex, setTaglineIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const interval = setInterval(() => {
+      setTaglineIndex((i) => (i + 1) % taglines.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!mounted) return null;
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Subtle ambient gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-indigo-950/10 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-[40vh] bg-gradient-to-t from-indigo-950/5 via-transparent to-transparent pointer-events-none" />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="text-center mb-12"
+        >
+          <div className="text-indigo-400/60 text-xs font-mono tracking-[0.3em] mb-6">
+            AN INTERACTIVE MULTIVERSE STORY
+          </div>
+
+          <h1 className="text-5xl sm:text-7xl font-extralight tracking-tight mb-2">
+            <span className="text-white">Almost</span>{" "}
+            <span className="text-indigo-400">Home</span>
+          </h1>
+
+          <div className="h-8 mt-6 overflow-hidden">
+            <motion.p
+              key={taglineIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.6 }}
+              className="text-zinc-500 text-sm sm:text-base font-light"
+            >
+              {taglines[taglineIndex]}
+            </motion.p>
+          </div>
+        </motion.div>
+
+        {/* Credit counter preview */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.8 }}
+          className="mb-12"
+        >
+          <div className="bg-zinc-950 border border-zinc-800/50 rounded-lg px-6 py-3 font-mono text-sm">
+            <span className="text-zinc-600">CREDITS: </span>
+            <span className="text-indigo-400">100</span>
+            <span className="text-zinc-700 ml-3">— your starting balance</span>
+          </div>
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.6 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <button
+            onClick={() => router.push("/play")}
+            className="group relative bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-8 py-4 font-mono text-sm tracking-wide transition-all hover:shadow-lg hover:shadow-indigo-500/20"
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+            BEGIN YOUR STORY
+            <span className="absolute inset-0 rounded-lg border border-indigo-400/0 group-hover:border-indigo-400/30 transition-colors" />
+          </button>
+
+          <p className="text-zinc-700 text-xs font-mono">
+            No signup required. Just play.
+          </p>
+        </motion.div>
+
+        {/* Story premise teaser */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.8, duration: 1 }}
+          className="mt-20 max-w-lg text-center"
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <p className="text-zinc-600 text-sm leading-relaxed">
+            You died. The future brought you back. Now you&apos;re searching for
+            home across the multiverse — but every version is almost right and
+            never quite. The nameplate on the door is always one letter off.
+          </p>
+          <p className="text-zinc-700 text-xs mt-4 leading-relaxed">
+            A resource-management narrative game. Every choice costs credits.
+            Small nudges are cheap. Big changes drain you. When the credits run
+            out, you&apos;re alone with your own free thinking.
+          </p>
+        </motion.div>
+
+        {/* Bottom info */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.5, duration: 0.8 }}
+          className="absolute bottom-8 flex flex-col items-center gap-2"
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <div className="flex gap-6 text-zinc-700 text-xs font-mono">
+            <span>INTERACTIVE FICTION</span>
+            <span className="text-zinc-800">•</span>
+            <span>AI-POWERED BRANCHING</span>
+            <span className="text-zinc-800">•</span>
+            <span>RESOURCE MANAGEMENT</span>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
