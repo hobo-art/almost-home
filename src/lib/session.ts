@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { prisma } from "./prisma";
 import { INITIAL_CREDITS } from "@/data/prologue";
 
-export const ANON_COOKIE_NAME = "ah_session";
+const ANON_COOKIE_NAME = "ah_session";
 const ANON_SESSION_TTL_DAYS = 30;
 
 export interface SessionInfo {
