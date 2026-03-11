@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import StoryRenderer from "@/components/StoryRenderer";
 import CreditMeter from "@/components/CreditMeter";
@@ -71,8 +71,18 @@ export default function PlayPage() {
   };
 
   const handlePrologueEnd = () => {
-    // After a delay, we could prompt signup for anonymous users
+    // PrologueGateway component handles the UI at end-of-prologue
   };
+
+  const handleNewJourney = useCallback(async () => {
+    try {
+      await fetch("/api/session/reset", { method: "POST" });
+      window.location.reload();
+    } catch {
+      // fallback: reload anyway
+      window.location.reload();
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -129,6 +139,14 @@ export default function PlayPage() {
               Or sit with the silence. Think for free. No one is charging you
               for that.
             </p>
+            {gameState?.sessionType === "anon" && (
+              <button
+                onClick={handleNewJourney}
+                className="text-zinc-700 hover:text-zinc-500 text-xs font-mono transition-colors mt-4"
+              >
+                START A NEW JOURNEY
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -155,8 +173,16 @@ export default function PlayPage() {
         />
       </main>
 
-      <footer className="fixed bottom-4 left-4 text-zinc-800 text-xs font-mono">
-        ALMOST HOME
+      <footer className="fixed bottom-4 left-0 right-0 flex items-center justify-between px-4 text-zinc-800 text-xs font-mono">
+        <span>ALMOST HOME</span>
+        {gameState.sessionType === "anon" && (
+          <button
+            onClick={handleNewJourney}
+            className="hover:text-zinc-600 transition-colors"
+          >
+            NEW JOURNEY
+          </button>
+        )}
       </footer>
     </div>
   );
