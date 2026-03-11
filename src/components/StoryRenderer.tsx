@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import TypewriterText from "./TypewriterText";
 import ChoicePanel from "./ChoicePanel";
 import SceneTransition from "./SceneTransition";
+import PrologueGateway from "./PrologueGateway";
 
 interface Choice {
   id: string;
@@ -44,6 +45,7 @@ export default function StoryRenderer({
   onCreditsChange,
   onOutOfCredits,
   onPrologueEnd,
+  sessionType,
 }: StoryRendererProps) {
   const [currentNode, setCurrentNode] = useState<StoryNode>(initialNode);
   const [credits, setCredits] = useState(initialCredits);
@@ -167,7 +169,7 @@ export default function StoryRenderer({
         </div>
       )}
 
-      {textComplete && (
+      {textComplete && currentNode.choices.length > 0 && (
         <ChoicePanel
           choices={currentNode.choices}
           onChoose={handleChoice}
@@ -175,6 +177,10 @@ export default function StoryRenderer({
           disabled={loading}
           credits={credits}
         />
+      )}
+
+      {textComplete && currentNode.choices.length === 0 && (
+        <PrologueGateway credits={credits} sessionType={sessionType} />
       )}
 
       {loading && (
