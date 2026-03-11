@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const taglines = [
   "Every version of home is one letter off.",
@@ -15,6 +15,7 @@ export default function LandingPage() {
   const router = useRouter();
   const [taglineIndex, setTaglineIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -23,6 +24,16 @@ export default function LandingPage() {
     }, 4000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleNewJourney = useCallback(async () => {
+    setResetting(true);
+    try {
+      await fetch("/api/session/reset", { method: "POST" });
+      router.push("/play");
+    } catch {
+      setResetting(false);
+    }
+  }, [router]);
 
   if (!mounted) return null;
 
@@ -95,6 +106,14 @@ export default function LandingPage() {
           <p className="text-zinc-700 text-xs font-mono">
             No signup required. Just play.
           </p>
+
+          <button
+            onClick={handleNewJourney}
+            disabled={resetting}
+            className="text-zinc-700 hover:text-zinc-500 text-xs font-mono transition-colors disabled:opacity-40 mt-2"
+          >
+            {resetting ? "RESETTING TIMELINE..." : "START A NEW JOURNEY"}
+          </button>
         </motion.div>
 
         {/* Story premise teaser */}
